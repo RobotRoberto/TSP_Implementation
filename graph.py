@@ -1,14 +1,16 @@
-import networkx as nx
+from tsputils import dist
 
 """
-A generic Graph class that builds from networkx library with intentions
+A generic Graph class that builds from the basic library with intentions
 to help modularize the code for building the TSP Solver, it supports 
 several file types ranging from the test files from class to TSPLIB format.
 """
 class Graph:
     def __init__(self):
-       self.G = nx.Graph()
-       self.coordinates = {}
+       self.nodes = [0]
+       self.coordinates = {0: (0,0)}
+       self.nodes_not_visited = set()
+       self.edges = None
 
     """
     A method to use for populating the graph with nodes from the datasets,
@@ -21,13 +23,27 @@ class Graph:
                 data = data.split()
                 node = int(data[0]) 
                 self.coordinates[node] = (float(data[1]), float(data[2]))
-                self.G.add_node(node)
+                self.nodes.append(node)
+                self.nodes_not_visited.add(node)
 
+        self.edges = [[dist(self.coordinates[node], self.coordinates[neighbor])
+            for neighbor in self.nodes] for node in self.nodes]
     """
     Helper method useful in debugging sessions or for display in enjoyment
     """
     def display(self):
-        print("This graph has the following nodes:", list(self.G))
-        print("This graph has the following edges:", list(self.G))
+        print("This graph has the following nodes:", list(self.nodes))
         print("And, coordinates of the graph nodes are:",
                self.coordinates)
+        print(self.edges)
+
+
+    def visit(self, node):
+        self.nodes_not_visited.remove(node)
+
+    def unvisited_nodes(self):
+        return self.nodes_not_visited
+
+    def clear_unvisited_nodes(self):
+        self.nodes_not_visited = set(self.nodes)
+        self.nodes_not_visited.remove(0)
