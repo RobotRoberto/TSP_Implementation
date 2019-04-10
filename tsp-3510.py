@@ -3,50 +3,33 @@ import graph
 import math
 from graph import Graph
 import heapq as hq
+import time
+from tsputils import swap, calculate_tour_dist, tsp_simulated_annelling
+from tsputils import read_opt_tour, tsp_2opt, swap
+import random
 
+start = time.time()
 graph = Graph()
-graph.populate_from_file('dataset/mat-test.txt')
+graph.populate_from_file('dataset/pcb442.txt')
+# opt_tour = read_opt_tour('dataset/pcb442-opt.txt')
 
-inf = float("inf")
-src = 1
+tour = graph.get_nodes()
+tour.append(tour[0])
 
-dist = graph.edges[src]
-print(dist)
-path = []
-queue = []
-hq.heappush(queue, (dist[src], src))
-last_node = src
-total_dist = 0
+print("The random tour is: ", tour)
+print(f'Distance of tour: {calculate_tour_dist(graph, tour)}')
 
-while len(queue) > 0:
-    node_dist, node = hq.heappop(queue)
+tour = tsp_simulated_annelling(graph, tour, 200, time.time()+90)
+# while time.time() < start + 180:
+#      tour = run_2opt(graph, tour, time.time()+22)
+#      tour = simulated_annelling_tsp(graph, tour, 50, time.time()+22)
+tour = tsp_2opt(graph, tour, time.time()+90)
 
-    if node not in graph.unvisited_nodes():
-        continue
+if time.time() < start + 180:
+    tour = tsp_simulated_annelling(graph, tour, 30, start + 180)
 
-    graph.visit(node)
-    path.append(node)
-    total_dist += graph.edges[last_node][node]
-    last_node = node
-    print("Visiting node ", node)
-    print(total_dist)
-
-    for neighbor in graph.unvisited_nodes():
-        if graph.edges[node][neighbor] <= dist[neighbor]:
-            new_dist = graph.edges[node][neighbor]
-            dist[neighbor] = new_dist
-            hq.heappush(queue, (new_dist, neighbor))
-    
-    print(dist)
-    print("***********************")
-    print("***********************")
-    print("***********************")
-
-# Getting back to the source
-# path.append(src)
-# total_dist += graph.edges[last_node][src]
-
-            
-print("The two-approximation algorithm for the TSP Solver yields: ", total_dist)
-print("The path is: ", path)
-print(sum(dist)-dist[0])
+print("The tour is: ", tour)
+print(f'Distance of tour: {calculate_tour_dist(graph, tour)}')
+print("Total execution time:" + str(time.time()-start))
+# print("The optimal tour is:", opt_tour)
+# print(f'Distance of opt tour is: {calculate_tour_dist(graph, opt_tour)}')

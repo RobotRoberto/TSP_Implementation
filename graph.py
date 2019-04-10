@@ -2,7 +2,7 @@ from tsputils import dist
 
 """
 A generic Graph class that builds from the basic library with intentions
-to help modularize the code for building the TSP Solver, it supports 
+to help modularize the code for building the TSP Solver, it supports
 several file types ranging from the test files from class to TSPLIB format.
 """
 class Graph:
@@ -21,10 +21,9 @@ class Graph:
             for line in graph_file:
                 data = line.rstrip('\n')
                 data = data.split()
-                node = int(data[0]) 
+                node = int(data[0])
                 self.coordinates[node] = (float(data[1]), float(data[2]))
                 self.nodes.append(node)
-                self.nodes_not_visited.add(node)
 
         self.edges = [[dist(self.coordinates[node], self.coordinates[neighbor])
             for neighbor in self.nodes] for node in self.nodes]
@@ -38,12 +37,5 @@ class Graph:
         print(self.edges)
 
 
-    def visit(self, node):
-        self.nodes_not_visited.remove(node)
-
-    def unvisited_nodes(self):
-        return self.nodes_not_visited
-
-    def clear_unvisited_nodes(self):
-        self.nodes_not_visited = set(self.nodes)
-        self.nodes_not_visited.remove(0)
+    def get_nodes(self):
+        return self.nodes[1:]
