@@ -135,3 +135,58 @@ def tsp_2opt(graph, route, stopping_time):
 
     assert len(best_route) == len(route)
     return best_route
+
+def random_set(length):
+    r_set = set()
+    for i in range(1, length-2):
+        for j in range(i+1, length-1):
+            r_set.add((i,j))
+
+    return r_set
+
+def tsp_simulated_annelling_mod(graph, tour, temperature, stopping_time):
+    print("Modified Simulated Annealing")
+    curr_cost = calculate_tour_dist(graph, tour)
+
+    global_best_tour, best_tour_cost = tour, curr_cost
+    curr_set = random_set(len(tour))
+    itr_since_swp = 0
+    while time.time() < stopping_time:
+        if len(curr_set) == 0:
+            curr_set = random_set(len(tour))
+
+        outcome = random.sample(curr_set, 1)
+        i, k = outcome[0]
+
+        new_tour = swap(tour, i, k)
+
+        if time.time() > stopping_time:
+            break
+
+        new_tour_cost = calculate_tour_dist(graph, new_tour)
+
+        if time.time() > stopping_time:
+            break
+
+        if new_tour_cost < curr_cost:
+            tour, curr_cost = new_tour, new_tour_cost
+            itr_since_swp = 0
+
+            if time.time() > stopping_time:
+                break
+
+            if new_tour_cost < best_tour_cost:
+                global_best_tour, best_tour_cost = tour, curr_cost
+                print_str = f'New Global tour of cost: {curr_cost} at temp: \
+                    {temperature}'
+                print(f'New tour of cost: {curr_cost} at temp: {temperature}')
+        elif temperature_function(curr_cost, new_tour_cost, temperature):
+            itr_since_swp = 0
+            tour, curr_cost = new_tour, new_tour_cost
+        else:
+            itr_since_swp += 1
+            curr_set.remove((i, k))
+
+        temperature = temperature_schedule(temperature, itr_since_swp)
+
+    return global_best_tour
