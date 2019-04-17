@@ -1,12 +1,13 @@
 import math
 import random
 import time
+import gc
 
 """
 A utility function to figure out the euclidean distance between two nodes
 """
 def dist(node1, node2):
-    return math.sqrt((node1[0]-node2[0])**2+(node1[1]-node2[1])**2)
+    return math.sqrt(math.pow(node1[0]-node2[0], 2) + math.pow((node1[1]-node2[1]),2))
 
 def read_opt_tour(file_name):
     with open(file_name) as graph_file:
@@ -93,9 +94,6 @@ def tsp_simulated_annelling(graph, tour, temperature, stopping_time):
 
             if new_tour_cost < best_tour_cost:
                 global_best_tour, best_tour_cost = tour, curr_cost
-                print_str = f'New Global tour of cost: {curr_cost} at temp: \
-                    {temperature}'
-                print(f'New tour of cost: {curr_cost} at temp: {temperature}')
         elif temperature_function(curr_cost, new_tour_cost, temperature):
             itr_since_swp = 0
             tour, curr_cost = new_tour, new_tour_cost
@@ -131,7 +129,6 @@ def tsp_2opt(graph, route, stopping_time):
                     best_distance = new_distance
                     best_route = new_route
                     improvement = True
-                    print(f'New tour of cost: {best_distance}')
 
     assert len(best_route) == len(route)
     return best_route
@@ -177,9 +174,6 @@ def tsp_simulated_annelling_mod(graph, tour, temperature, stopping_time):
 
             if new_tour_cost < best_tour_cost:
                 global_best_tour, best_tour_cost = tour, curr_cost
-                print_str = f'New Global tour of cost: {curr_cost} at temp: \
-                    {temperature}'
-                print(f'New tour of cost: {curr_cost} at temp: {temperature}')
         elif temperature_function(curr_cost, new_tour_cost, temperature):
             itr_since_swp = 0
             tour, curr_cost = new_tour, new_tour_cost

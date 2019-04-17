@@ -7,6 +7,7 @@ from tsputils import swap, calculate_tour_dist, tsp_simulated_annelling
 from tsputils import read_opt_tour, tsp_2opt, swap, tsp_simulated_annelling_mod
 import random
 from argparse import ArgumentParser
+import gc
 
 parser = ArgumentParser(description="\tMy TSP Solver and Implementation.\n\n")
 parser.add_argument('-i', '--input', help='\t\tInput file for TSP graph.',
@@ -25,18 +26,21 @@ graph.populate_from_file(file_in)
 tour = graph.get_nodes()
 tour.append(tour[0])
 
-print("The random tour is: ", tour)
-print(f'Distance of tour: {calculate_tour_dist(graph, tour)}')
+print(f'Distance of beginning tour: {calculate_tour_dist(graph, tour)}')
 
 h_time = time_to_complete / 2
-critical_time = 2
-q_time = ((h_time - critical_time) / 2)
+critical_time = 1.5
+q_time = (h_time - critical_time)
 stop_time = start + time_to_complete - critical_time
-
 tour = tsp_simulated_annelling(graph, tour, 200, time.time()+h_time)
-while time.time() < stop_time:
-      tour = tsp_2opt(graph, tour, time.time()+q_time)
-      tour = tsp_simulated_annelling_mod(graph, tour, 50, time.time()+q_time)
+print(f'Distance of tour: {calculate_tour_dist(graph, tour)}')
+gc.collect()
+
+tour = tsp_2opt(graph, tour, time.time()+q_time)
+print(f'Distance of tour: {calculate_tour_dist(graph, tour)}')
+gc.collect()
+
+tour = tsp_simulated_annelling_mod(graph, tour, 150, stop_time)
 
 print("The tour is: ", tour)
 print(f'Distance of tour: {calculate_tour_dist(graph, tour)}')
