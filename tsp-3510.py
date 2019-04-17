@@ -1,4 +1,3 @@
-import networkx as nx
 import graph
 import math
 from graph import Graph
