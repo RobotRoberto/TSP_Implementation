@@ -13,6 +13,6 @@ To run the application, you need to pass in arguments:
 * '-t', the allotted time to complete tour search
 (for when you want to do more in the world than just waiting for the most optimal tour)
 ```markdown
-python tsp-3510.py -i 'dataset/tsp1000.txt' -o 'output_tour.txt' -t 20
+python3 tsp_solver.py 'dataset/tsp1000.txt' -o 'output_tour.txt' -t 20
 ```
 All of the field are necessary, so do not skip any inputs!
